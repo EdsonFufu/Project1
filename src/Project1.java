@@ -1,11 +1,14 @@
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.function.Predicate;
 
 public class Project1 {
     static String PATH2MAIN = "main";
@@ -29,7 +32,7 @@ public class Project1 {
         while (true) {
             int n = input.nextInt();
             if (n == 1) {
-                getMenu();
+                showMenu();
             } else if (n == 0) {
                 System.out.println("Bye!!!");
                 System.exit(1);
@@ -38,7 +41,7 @@ public class Project1 {
             }
         }
     }
-    private static void getMenu() {
+    private static void showMenu() {
         System.out.println("\n1: View Files\n2: File Operations\n0: Exit\n");
         Scanner input = new Scanner(System.in);
         while (true) {
@@ -65,7 +68,7 @@ public class Project1 {
 
     private static void viewFiles() {
         Arrays.stream(new File(PATH2MAIN).listFiles()).sorted().forEach(System.out::println);
-        getMenu();
+        showMenu();
     }
     public static void copyFile(String from, String to) throws IOException {
         Path src = Paths.get(from);
@@ -95,6 +98,35 @@ public class Project1 {
             promptUserToInputFileName();
         }
         return fileName;
+    }
+
+    private static void searchFileByName() {
+        String fileName = promptUserToInputFileName();
+        File files = new File("./main/");
+        Optional<String> searchedFileOptional = Arrays.stream(files.listFiles()).filter(file -> file.getName().startsWith(fileName)).map(file -> file.getName()).findFirst();
+
+        if(searchedFileOptional.isPresent()){
+            System.out.println("File Found:" + searchedFileOptional.get());
+        }else {
+            System.out.println("File Not Found!!!!!!");
+        }
+        showMenu();
+    }
+    private static void addNewFile() {
+        String fileName = promptUserToInputFileName();
+        try {
+            File file = new File("./main/" + fileName);
+            if (file.createNewFile()) {
+                System.out.println("Success! File  " + file.getName() + " created\n\n");
+            } else {
+                System.out.println("File already exists.\n\n");
+            }
+            fileOperations();
+        } catch (IOException e) {
+            System.out.println("Error:" + e.getMessage() +"\n\n");
+            e.printStackTrace();
+            fileOperations();
+        }
     }
 
 }
