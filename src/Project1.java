@@ -39,7 +39,7 @@ public class Project1 {
         }
     }
     private static void getMenu() {
-        System.out.println("1: View Files\n2: File Operations\n0: Exit");
+        System.out.println("\n1: View Files\n2: File Operations\n0: Exit\n");
         Scanner input = new Scanner(System.in);
         while (true) {
             Integer in = input.nextInt();
@@ -64,13 +64,37 @@ public class Project1 {
     }
 
     private static void viewFiles() {
-        Arrays.stream(new File(PATH2MAIN).listFiles()).forEach(System.out::println);
+        Arrays.stream(new File(PATH2MAIN).listFiles()).sorted().forEach(System.out::println);
         getMenu();
     }
     public static void copyFile(String from, String to) throws IOException {
         Path src = Paths.get(from);
         Path dest = Paths.get(to);
         Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
+    }
+    private static void deleteFile() {
+        String fileName = promptUserToInputFileName();
+        File file = new File("./main/" + fileName);
+        if(file.exists()) {
+            if (file.delete()) {
+                System.out.println("Success! File " + file.getName() + " Deleted\n\n");
+            } else {
+                System.out.println("Failed to delete the file:" + file.getName() + "\n\n");
+            }
+        }else{
+            System.out.println("File:" + file.getName() + " does not exists\n\n");
+        }
+        fileOperations();
+
+    }
+    private static String promptUserToInputFileName() {
+        System.out.println("Please enter the file name: ");
+        Scanner input = new Scanner(System.in);
+        String fileName = input.nextLine();
+        if ("".equalsIgnoreCase(fileName.trim())) {
+            promptUserToInputFileName();
+        }
+        return fileName;
     }
 
 }
